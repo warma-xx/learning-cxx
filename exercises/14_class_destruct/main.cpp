@@ -11,19 +11,34 @@ class DynFibonacci {
 
 public:
     // TODO: 实现动态设置容量的构造器
-    DynFibonacci(int capacity): cache(new ?), cached(?) {}
-
-    // TODO: 实现析构器，释放缓存空间
-    ~DynFibonacci();
-
-    // TODO: 实现正确的缓存优化斐波那契计算
-    size_t get(int i) {
-        for (; false; ++cached) {
-            cache[cached] = cache[cached - 1] + cache[cached - 2];
-        }
-        return cache[i];
+    DynFibonacci(int capacity): capacity(capacity), cached(0) {
+    if (capacity < 2) {
+        throw std::invalid_argument("Capacity must be at least 2");
     }
-};
+    cache = new size_t[capacity]; // 动态分配缓存空间
+    cache[0] = 0; // 初始化第一个斐波那契数
+    cache[1] = 1; // 初始化第二个斐波那契数
+    cached = 2;   // 已经缓存了两个数
+}
+    // TODO: 实现析构器，释放缓存空间
+    ~DynFibonacci() {
+    delete[] cache; // 释放动态分配的缓存空间
+}
+    // TODO: 实现正确的缓存优化斐波那契计算
+size_t get(int i) {
+    if (i < 0) {
+        throw std::invalid_argument("Index must be non-negative");
+    }
+    if (i >= capacity) {
+        throw std::out_of_range("Index exceeds cache capacity");
+    }
+    // 如果 i 大于当前已缓存的数量，继续计算并缓存
+    while (cached <= i) {
+        cache[cached] = cache[cached - 1] + cache[cached - 2];
+        ++cached;
+    }
+    return cache[i];
+}
 
 int main(int argc, char **argv) {
     DynFibonacci fib(12);
